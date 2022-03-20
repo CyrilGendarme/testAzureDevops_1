@@ -10,13 +10,36 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+
+
+# - task: Maven@3
+#   inputs:
+#     mavenPomFile: 'pom.xml'
+#     mavenOptions: '-Xmx3072m'
+#     javaHomeOption: 'JDKVersion'
+#     jdkVersionOption: '1.8'
+#     jdkArchitectureOption: 'x64'
+#     publishJUnitResults: true
+#     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#     goals: 'package'
+
+jobs:
+   #Maven package
+  - job: maven_package
+    pool:
+      vmImage: ubuntu-latest
+    container: maven:3.8.1-openjdk-17-slim
+    variables:
+      - name: JAVA_HOME_11_X64
+        value: /usr/local/openjdk-17
+    steps:
+      - task: Maven@3
+        displayName: maven_package
+        inputs:
+          mavenPomFile: 'pom.xml'
+          javaHomeOption: 'path'
+          jdkDirectory: '/usr/local/openjdk-17'
+          mavenVersionOption: 'Default'
+          mavenAuthenticateFeed: true
+          goals: package
+
